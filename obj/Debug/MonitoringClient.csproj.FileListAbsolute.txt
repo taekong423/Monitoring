@@ -1,0 +1,9 @@
+c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\MonitoringClient\bin\Debug\MonitoringClient.exe.config
+c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\MonitoringClient\bin\Debug\MonitoringClient.exe
+c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\MonitoringClient\bin\Debug\MonitoringClient.pdb
+c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\MonitoringClient\bin\Debug\StackExchange.Redis.dll
+c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\MonitoringClient\bin\Debug\StackExchange.Redis.pdb
+c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\MonitoringClient\bin\Debug\StackExchange.Redis.xml
+c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\MonitoringClient\obj\Debug\MonitoringClient.csprojResolveAssemblyReference.cache
+c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\MonitoringClient\obj\Debug\MonitoringClient.exe
+c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\MonitoringClient\obj\Debug\MonitoringClient.pdb
