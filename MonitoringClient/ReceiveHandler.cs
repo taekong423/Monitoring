@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using Ircc;
 using static Ircc.IrccHelper;
-using StackExchange.Redis;
 
 namespace MonitoringClient
 {
@@ -21,6 +15,7 @@ namespace MonitoringClient
         static int currentRoomCount = 0;
         static int currentUserCount = 0;
         static short mListCount = 0;
+        static List<long> id = new List<long>();
 
         public ReceiveHandler()
         {
@@ -38,17 +33,6 @@ namespace MonitoringClient
             this.server = server;
             this.recvPacket = recvPacket;
             servers.Add(server);
-        }
-
-        public void AddServer(ServerHandle server)
-        {
-            if (!servers.Contains(server))
-                servers.Add(server);
-        }
-
-        public List<ServerHandle> GetServerList()
-        {
-            return servers;
         }
 
         //public Packet PacketHandler()
@@ -158,23 +142,41 @@ namespace MonitoringClient
                         break;
                     case Code.MLIST_RES:
                         //FE -> MCL side
+                        // size of list of rooms received
+                        const int userSize = sizeof(int);
+                        const int roomSize = sizeof(long);
+                        int recvSize = recvPacket.header.size - userSize;
+                        byte[] userBytes = new byte[userSize];
+                        byte[] roomBytes = new byte[recvSize];
+                        Array.Copy(recvPacket.data, 0, userBytes, 0, userSize);
+                        Array.Copy(recvPacket.data, userSize, roomBytes, 0, recvSize);
 
-                        byte[] roomBytes = new byte[4];
-                        byte[] userBytes = new byte[4];
-                        Array.Copy(recvPacket.data, 0, roomBytes, 0, sizeof(int));
-                        Array.Copy(recvPacket.data, sizeof(int), userBytes, 0, sizeof(int));
-
-                        currentRoomCount += BitConverter.ToInt32(roomBytes, 0);
                         currentUserCount += BitConverter.ToInt32(userBytes, 0);
+
+                        for (int i = 0; i < roomSize; i += roomSize)
+                        {
+                            byte[] tempByte = new byte[roomSize];
+                            Array.Copy(roomBytes, i, tempByte, 0, roomSize);
+                            long tempId = BitConverter.ToInt64(tempByte, 0);
+                            if (0 != tempId)
+                            {
+                                if (!id.Contains(tempId))
+                                    id.Add(tempId);
+                            }
+                        }
+                        
                         mListCount++;
 
                         if (mListCount == recvPacket.header.sequence)
                         {
+                            Console.WriteLine("\nCurrent User Count: {0}", currentUserCount);
+                            currentRoomCount = id.Count;
                             Console.WriteLine("Current Room Count: {0}", currentRoomCount);
-                            Console.WriteLine("Current User Count: {0}", currentUserCount);
+
                             currentRoomCount = 0;
                             currentUserCount = 0;
                             mListCount = 0;
+                            id.Clear();
                         }
 
                         returnHeader = NoResponseHeader;
@@ -321,19 +323,10 @@ namespace MonitoringClient
             return returnPacket;
         }
 
-        private long ToInt64(byte[] bytes, int startIndex)
+        public void SetCountValue(out int userCount, out int roomCount)
         {
-            long result = 0;
-            try
-            {
-                result = BitConverter.ToInt64(bytes, startIndex);
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("bytes to int64: fuck you. you messsed up");
-            }
-
-            return result;
+            userCount = currentUserCount;
+            roomCount = currentRoomCount;
         }
     }
 }

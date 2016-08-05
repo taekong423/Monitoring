@@ -7,3 +7,12 @@ c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\Monitori
 c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\MonitoringClient\obj\Debug\MonitoringClient.csprojResolveAssemblyReference.cache
 c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\MonitoringClient\obj\Debug\MonitoringClient.exe
 c:\users\taekong\documents\visual studio 2015\Projects\MonitoringClient\MonitoringClient\obj\Debug\MonitoringClient.pdb
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Debug\MonitoringClient.exe.config
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\obj\Debug\MonitoringClient.exe
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\obj\Debug\MonitoringClient.pdb
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Debug\MonitoringClient.exe
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Debug\MonitoringClient.pdb
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Debug\StackExchange.Redis.dll
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Debug\StackExchange.Redis.pdb
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Debug\StackExchange.Redis.xml
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\obj\Debug\MonitoringClient.csprojResolveAssemblyReference.cache

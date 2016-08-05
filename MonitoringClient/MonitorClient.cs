@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MonitoringClient
 {
-    class TcpMonitor
+    class MonitorClient
     {
+        public Socket monitorSocket;
+
         string host;
         int port;
-        public Socket monitorSocket;
         IPEndPoint ipLocalEP;
 
-        public TcpMonitor(string hname, string pname)
+        public MonitorClient(string hname, string pname)
         {
             host = hname;
             if (!Int32.TryParse(pname, out port))
@@ -52,5 +49,7 @@ namespace MonitoringClient
         }
 
         
+
+
     }
 }

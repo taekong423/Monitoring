@@ -1,0 +1,9 @@
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Release\MonitoringClient.exe.config
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Release\MonitoringClient.exe
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Release\MonitoringClient.pdb
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Release\StackExchange.Redis.dll
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Release\StackExchange.Redis.pdb
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Release\StackExchange.Redis.xml
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\obj\Release\MonitoringClient.exe
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\obj\Release\MonitoringClient.pdb
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\obj\Release\MonitoringClient.csprojResolveAssemblyReference.cache
