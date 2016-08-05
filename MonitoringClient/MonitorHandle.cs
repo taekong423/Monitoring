@@ -18,7 +18,6 @@ namespace MonitoringClient
         int sleepTime = 1000;
 
         RedisHelper redis = null;
-        Thread mThread = null;
         ReceiveHandler recvHandler = null;
         MonitorClient server = null;
 
@@ -38,7 +37,6 @@ namespace MonitoringClient
 
             Console.WriteLine("Initializing MonitorClient");
             recvHandler = new ReceiveHandler();
-            mThread = new Thread(RealTimeMonitor);
         }
 
         public RedisHelper InitializeRedis()
@@ -110,12 +108,12 @@ namespace MonitoringClient
                         {
                             case "0":
                                 state = CommandState.Finish;
+                                CloseAllServer();
                                 break;
 
                             case "1":
                                 state = CommandState.Main;
-                                //server.CloseServer();
-                                //servers.Clear();
+                                CloseAllServer();
                                 break;
 
                             case "2":
@@ -130,13 +128,13 @@ namespace MonitoringClient
                                 {
                                     Console.WriteLine("\nFAIL to connect...");
                                     server = null;
-                                    continue;
+                                    break;
                                 }
                                 catch (Exception e)
                                 {
                                     Console.WriteLine(e.Message);
                                     server = null;
-                                    continue;
+                                    break;
                                 }
                                 break;
 
@@ -158,6 +156,7 @@ namespace MonitoringClient
                         DivideSection();
 
                         // Monitoring Thread
+                        Thread mThread = new Thread(RealTimeMonitor);
                         mThread.Start();
 
                         command = GetCommand();
@@ -165,10 +164,14 @@ namespace MonitoringClient
                         {
                             case "0":
                                 state = CommandState.Finish;
+                                mThread.Abort();
+                                CloseAllServer();
                                 break;
 
                             case "1":
                                 state = CommandState.Main;
+                                mThread.Abort();
+                                CloseAllServer();
                                 break;
 
                             default:
@@ -177,8 +180,6 @@ namespace MonitoringClient
                                 break;
                         }
 
-                        // Finish Thread
-                        mThread.Abort();
                         break;
 
                     case CommandState.Finish:
@@ -211,17 +212,31 @@ namespace MonitoringClient
 
                 lock (servers)
                 {
+                    //CheckConnection();
                     // Request Current Server Information (User, Room)
                     Header reqHeader = new Header(Comm.CS, Code.MLIST, 0, (short)servers.Count);
                     Packet reqPacket = new Packet(reqHeader, null);
 
                     foreach (ServerHandle sh in servers)
-                        sh.Send(reqPacket);
+                    {
+                        if (sh.isConnected())
+                            sh.Send(reqPacket);
+                    }
+                        
                 }
 
                 monitorCount++;
                 // Update every [sleepTime] seconds
                 Thread.Sleep(sleepTime);
+            }
+        }
+
+        void CheckConnection()
+        {
+            foreach (ServerHandle handle in servers)
+            {
+                if (handle.isConnected())
+                    servers.Remove(handle);
             }
         }
 
@@ -276,7 +291,7 @@ namespace MonitoringClient
 
         void RankingList(int endRank)
         {
-            Console.WriteLine("< Redis Chat Ranking >");
+            Console.WriteLine("\n< Redis Chat Ranking >");
             Dictionary<string, double> ranking = new Dictionary<string, double>();
             ranking = redis.GetAllTimeRankings(endRank);
             foreach (KeyValuePair<string, double> pair in ranking)
@@ -317,6 +332,11 @@ namespace MonitoringClient
             monitor.ConnectServer();
             ServerHandle server = new ServerHandle(monitor.monitorSocket);
             servers.Add(server);
+        }
+
+        void CloseAllServer()
+        {
+            servers.Clear();
         }
     }
         

@@ -16,6 +16,8 @@ namespace MonitoringClient
         Socket so;
         ReceiveHandler recvHandler;
 
+        public Socket ServerSocket { get { return so; } }
+
         public ServerHandle(Socket s)
         {
             so = s;
@@ -28,7 +30,7 @@ namespace MonitoringClient
         {
             string remoteHost = ((IPEndPoint)so.RemoteEndPoint).Address.ToString();
             string remotePort = ((IPEndPoint)so.RemoteEndPoint).Port.ToString();
-            Console.WriteLine("[Server] Connection established with {0}:{1}\n", remoteHost, remotePort);
+            //Console.WriteLine("[Server] Connection established with {0}:{1}\n", remoteHost, remotePort);
 
             for (;;)
             {
@@ -195,13 +197,14 @@ namespace MonitoringClient
             return true;
         }
 
-        private bool isConnected()
+        public bool isConnected()
         {
             try
             {
                 return !(so.Poll(1, SelectMode.SelectRead) && so.Available == 0);
             }
             catch (SocketException) { return false; }
+            catch (ObjectDisposedException) { return false; }
         }
     }
 }

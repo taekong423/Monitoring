@@ -9,8 +9,9 @@ namespace MonitoringClient
     {
         ServerHandle server;
         Packet recvPacket;
-        RedisHelper redis;
         Header NoResponseHeader = new Header(-1, 0, 0);
+        Packet NoResponsePacket = new Packet(new Header(-1, 0, 0), null);
+
         public static List<ServerHandle> servers;
         static int currentRoomCount = 0;
         static int currentUserCount = 0;
@@ -20,12 +21,6 @@ namespace MonitoringClient
         public ReceiveHandler()
         {
             servers = new List<ServerHandle>();
-        }
-
-        public ReceiveHandler(Packet recvPacket, RedisHelper redis)
-        {
-            this.recvPacket = recvPacket;
-            this.redis = redis;
         }
 
         public ReceiveHandler(ServerHandle server, Packet recvPacket)
@@ -45,7 +40,7 @@ namespace MonitoringClient
             bool debug = false;
 
             if (debug)
-                Console.WriteLine("==RECEIVED: \n" + PacketDebug(recvPacket));
+                Console.WriteLine("==RECEIVED:\n" + PacketDebug(recvPacket));
 
             //Client to Server side
             if (Comm.CS == recvPacket.header.comm)
@@ -69,7 +64,6 @@ namespace MonitoringClient
                         //FE -> CL side
                         break;
 
-
                     //------------DESTROY------------
                     case Code.DESTROY:
                         //CL -> FE side
@@ -79,24 +73,23 @@ namespace MonitoringClient
                         //FE -> CL side
                         break;
 
-
                     //------------FAIL------------
                     case Code.FAIL:
                         returnHeader = NoResponseHeader;
                         returnData = null;
                         break;
 
-
                     //------------HEARTBEAT------------
                     case Code.HEARTBEAT:
                         //FE -> CL side
+                        returnHeader = new Header(Comm.CS, Code.HEARTBEAT_RES, 0);
+                        returnData = null;
                         break;
                     case Code.HEARTBEAT_RES:
                         //CL -> FE side
                         returnHeader = NoResponseHeader;
                         returnData = null;
                         break;
-
 
                     //------------JOIN------------
                     case Code.JOIN:
@@ -109,7 +102,6 @@ namespace MonitoringClient
                         //FE -> CL side
                         break;
 
-
                     //------------LEAVE------------
                     case Code.LEAVE:
                         //CL -> FE side
@@ -117,7 +109,6 @@ namespace MonitoringClient
                     case Code.LEAVE_ERR:
                         //FE -> CL side
                         break;
-
 
                     //------------LIST------------
                     case Code.LIST:
@@ -145,9 +136,12 @@ namespace MonitoringClient
                         // size of list of rooms received
                         const int userSize = sizeof(int);
                         const int roomSize = sizeof(long);
+
                         int recvSize = recvPacket.header.size - userSize;
+
                         byte[] userBytes = new byte[userSize];
                         byte[] roomBytes = new byte[recvSize];
+
                         Array.Copy(recvPacket.data, 0, userBytes, 0, userSize);
                         Array.Copy(recvPacket.data, userSize, roomBytes, 0, recvSize);
 
@@ -186,17 +180,14 @@ namespace MonitoringClient
                     //------------MSG------------
                     case Code.MSG:
                         //CL <--> FE side
-
                         break;
                     case Code.MSG_ERR:
                         //CL <--> FE side
                         break;
 
-
                     //------------SIGNIN------------
                     case Code.SIGNIN:
                         //CL -> FE -> BE side
-
                         break;
                     case Code.SIGNIN_ERR:
                         //BE -> FE -> CL side
@@ -204,10 +195,9 @@ namespace MonitoringClient
                     case Code.SIGNIN_RES:
                         //BE -> FE -> CL side
                         break;
-                    case Code.SIGNIN_DUM:
+                    case Code.SIGNIN_DUMMY:
                         //CL -> FE
                         break;
-
 
                     //------------SIGNUP------------
                     case Code.SIGNUP:
@@ -222,12 +212,12 @@ namespace MonitoringClient
                         //success
                         break;
 
-
                     //------------SUCCESS------------
                     case Code.SUCCESS:
                         //
                         break;
-
+                    
+                    //-----------Wrong Code Value-----------
                     default:
                         if (debug)
                             Console.WriteLine("Unknown code: {0}\n", recvPacket.header.code);
@@ -265,7 +255,6 @@ namespace MonitoringClient
                         //FE side
                         break;
 
-
                     //------------SJOIN------------
                     case Code.SJOIN:
                         //FE side
@@ -300,7 +289,6 @@ namespace MonitoringClient
                         //FE side
                         break;
 
-
                     //------------SMSG------------                
                     case Code.SMSG:
                         //FE side
@@ -321,12 +309,6 @@ namespace MonitoringClient
                 Console.WriteLine("==SEND: \n" + PacketDebug(returnPacket));
 
             return returnPacket;
-        }
-
-        public void SetCountValue(out int userCount, out int roomCount)
-        {
-            userCount = currentUserCount;
-            roomCount = currentRoomCount;
         }
     }
 }

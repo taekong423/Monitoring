@@ -7,3 +7,4 @@ C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Release\StackE
 C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\obj\Release\MonitoringClient.exe
 C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\obj\Release\MonitoringClient.pdb
 C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\obj\Release\MonitoringClient.csprojResolveAssemblyReference.cache
+C:\Users\taekong\Documents\GitHub\Monitoring\MonitoringClient\bin\Release\Ircc.dll

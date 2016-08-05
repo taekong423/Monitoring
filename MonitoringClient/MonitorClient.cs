@@ -32,6 +32,8 @@ namespace MonitoringClient
             ipLocalEP = new IPEndPoint(ipAddress, port);
         }
 
+
+
         public void ConnectServer()
         {
             Console.WriteLine("Connecting to {0}:{1} ...", (host == null ? "LOOPBACK" : host), port);

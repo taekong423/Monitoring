@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace MonitoringClient
 {
@@ -6,12 +7,38 @@ namespace MonitoringClient
     {
         static void Main(string[] args)
         {
-            string host = "10.100.58.5";
+            string host = GetAddress();
             //string host = null;
             string port = "30000";
+            try
+            {
+                MonitorHandle monitor = new MonitorHandle();
+                monitor.StartMonitoring(host, port);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                
+            }
+            
+        }
 
-            MonitorHandle monitor = new MonitorHandle();
-            monitor.StartMonitoring(host, port);
+        static string GetAddress()
+        {
+            string str = System.IO.File.ReadAllText("server.conf");
+            IPAddress address;
+            if (IPAddress.TryParse(str, out address))
+                return str;
+            else
+            {
+                Console.WriteLine("Invalid IPAddress Format --- e.g. 10.100.58.7");
+                Environment.Exit(0);
+                return null;
+            }
+
         }
     }
 }
