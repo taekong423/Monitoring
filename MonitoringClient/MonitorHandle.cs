@@ -31,7 +31,7 @@ namespace MonitoringClient
             Idle, Main, Redis, Connect, Server, Finish
         }
 
-        public MonitorHandle ()
+        public MonitorHandle()
         {
             // Init Redis
             redis = InitializeRedis();
@@ -43,9 +43,9 @@ namespace MonitoringClient
 
         public RedisHelper InitializeRedis()
         {
-            //string configString = "10.100.58.7:26379,keepAlive=180";
+            // Connect to Redis
             Console.WriteLine("Connecting to Redis...\n");
-            string configString = System.IO.File.ReadAllText("redis.conf");
+            string configString = System.IO.File.ReadAllText("redis.conf"); // redis.conf Format : 10.100.58.7:26379,keepAlive=180
             ConfigurationOptions configOptions = ConfigurationOptions.Parse(configString);
             return new RedisHelper(configOptions);
         }
@@ -53,7 +53,7 @@ namespace MonitoringClient
         public void StartMonitoring(string host, string port)
         {
             string command = null;
-            
+
             while (true)
             {
                 switch (state)
@@ -63,7 +63,7 @@ namespace MonitoringClient
                         state = CommandState.Main;
                         break;
 
-                    // Main Screen
+                    // Main Screen - Monitor with or without Server //
                     case CommandState.Main:
                         DivideSection();
                         Console.WriteLine("-------Monitoring Command-------\n" +
@@ -80,6 +80,7 @@ namespace MonitoringClient
 
                         break;
 
+                    // Monitor without Server, Show data from only Redis //
                     case CommandState.Redis:
                         DivideSection();
                         Console.WriteLine("-------Monitoring Command-------\n" +
@@ -94,6 +95,7 @@ namespace MonitoringClient
                         RedisCommand(command);
                         break;
 
+                    // Begin Server Connection Sequence //
                     case CommandState.Connect:
                         DivideSection();
                         Console.WriteLine("-------Monitoring Command-------\n" +
@@ -127,9 +129,15 @@ namespace MonitoringClient
                                 catch (SocketException se)
                                 {
                                     Console.WriteLine("\nFAIL to connect...");
+                                    server = null;
                                     continue;
                                 }
-
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e.Message);
+                                    server = null;
+                                    continue;
+                                }
                                 break;
 
                             case "3":
@@ -144,11 +152,12 @@ namespace MonitoringClient
                         }
 
                         break;
-
+                    
+                    // Monitor with Server Connection //
                     case CommandState.Server:
                         DivideSection();
-                        
-                        // 
+
+                        // Monitoring Thread
                         mThread.Start();
 
                         command = GetCommand();
@@ -200,17 +209,18 @@ namespace MonitoringClient
                 // Show Chat Ranking List
                 RankingList(endRank);
 
-                // Request Current Server Information (User, Room)
-                Header reqHeader = new Header(Comm.CS, Code.MLIST, 0, (short)servers.Count);
-                Packet reqPacket = new Packet(reqHeader, null);
-
-                foreach (ServerHandle sh in servers)
+                lock (servers)
                 {
-                    sh.Send(reqPacket);
+                    // Request Current Server Information (User, Room)
+                    Header reqHeader = new Header(Comm.CS, Code.MLIST, 0, (short)servers.Count);
+                    Packet reqPacket = new Packet(reqHeader, null);
+
+                    foreach (ServerHandle sh in servers)
+                        sh.Send(reqPacket);
                 }
 
                 monitorCount++;
-                // Run every 5 seconds
+                // Update every [sleepTime] seconds
                 Thread.Sleep(sleepTime);
             }
         }
@@ -308,6 +318,6 @@ namespace MonitoringClient
             ServerHandle server = new ServerHandle(monitor.monitorSocket);
             servers.Add(server);
         }
-        
     }
+        
 }
