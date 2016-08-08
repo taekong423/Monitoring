@@ -28,10 +28,10 @@ namespace MonitoringClient
 
         static string GetAddress()
         {
-            string str = System.IO.File.ReadAllText("server.conf");
+            string[] str = System.IO.File.ReadAllLines("server.conf");
             IPAddress address;
-            if (IPAddress.TryParse(str, out address))
-                return str;
+            if (IPAddress.TryParse(str[0].Trim(), out address))
+                return str[0].Trim();
             else
             {
                 Console.WriteLine("Invalid IPAddress Format --- e.g. 10.100.58.7");
